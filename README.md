@@ -1,0 +1,2 @@
+# TS_Foundation_Sample
+TypeScript基礎サンプルプロジェクト
