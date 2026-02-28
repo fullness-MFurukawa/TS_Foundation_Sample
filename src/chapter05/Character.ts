@@ -73,4 +73,11 @@ export class Character {
         if (this._hp < 0) this._hp = 0;
         console.log(`${this._name} は ${damage} のダメージを受けた！`);
     }
+
+    /**
+     * 攻撃をするメソッド
+     */
+    public attack(): void {
+        console.log("素手でパンチした！");
+    }
 }   
