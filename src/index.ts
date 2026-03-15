@@ -1,39 +1,39 @@
-import { Calculator } from "./chapter07/Calculator.js";
+import type { Employee } from "./chapter06/Employee.js";
 
 /**
- * 複数の計算タスクを並行して実行し、制御する非同期関数
+ * Record<K, T> で新しい型を作成
+ * 用途：従業員ID（文字列）をキーとして、従業員データ（Employee）を素早く検索できる辞書を作る
  */
-async function executeParallelTasks() {
-    // 計算機クラスのインスタンスを生成する
-    const calc = new Calculator();
+type EmployeeMap = Record<string, Employee>;
 
-    /**
-     * 複数のPromiseオブジェクトを生成し配列に格納する
-     * （この時点で各非同期処理は「実行状態」になる）
-     */
-    const promises = [
-        calc.calculateAndDelay("スレッド-A", 5, 1), // 加算
-        calc.calculateAndDelay("スレッド-B", 5, 2), // 乗算
-    ];
+// データベースから取得したデータを、検索しやすい辞書（マップ）形式で保持するイメージ
+const employeesCache: EmployeeMap = {
+    "E001": { 
+        id: "E001", 
+        name: "田中 太郎", 
+        age: 30, 
+        department: { id: "D01", name: "総務部" } 
+    },
+    "E002": { 
+        id: "E002", 
+        name: "鈴木 花子", 
+        age: 25, 
+        department: { id: "D02", name: "開発部" } 
+    }
+};
 
-    try {
-        /**
-         * awaitを付与して、Promise.all の状態が確定するまで待機する
-         * すべてのPromiseが成功(Fulfilled)した場合、
-         * 各タスクの結果が配列として変数 results に直接代入される
-         */
-        const results = await Promise.all(promises);
-        
-        // 待機が完了し、値を受け取った後に以下の行が実行される
-        console.log("【Promise.all】全てのタスクが完了しました:", results);
-
-    } catch (error) {
-        /**
-         * いずれか一つでも失敗(Rejected)した場合、即座にこのcatchブロックへ処理が移る
-         */
-        console.error("【Promise.all】エラーが発生したため中断されました:", error);
+// IDを指定して従業員データを一瞬で検索する関数
+function findEmployee(id: string) {
+    // 辞書からキー(ID)を使って直接データを取り出す
+    const emp = employeesCache[id];
+    
+    if (emp) {
+        console.log(`✅ 見つかりました: [${emp.id}] ${emp.name} さん（${emp.department.name}）`);
+    } else {
+        console.log(`❌ ${id} の従業員は見つかりませんでした。`);
     }
 }
 
-// 非同期関数の実行
-executeParallelTasks();
+// 検索の実行
+findEmployee("E001");
+findEmployee("E999"); // 存在しないID
