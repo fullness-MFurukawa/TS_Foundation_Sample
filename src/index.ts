@@ -1,39 +1,21 @@
-import type { Employee } from "./chapter06/Employee.js";
+import { applyDiscount } from "./chapter06/HasPrice.js";
+import type { Appliance, Book } from "./chapter06/Products.js";
 
-/**
- * Record<K, T> で新しい型を作成
- * 用途：従業員ID（文字列）をキーとして、従業員データ（Employee）を素早く検索できる辞書を作る
- */
-type EmployeeMap = Record<string, Employee>;
+const myBook: Book = { title: "TypeScript入門", price: 3000, author: "山田 太郎" };
+const myAppliance: Appliance = { name: "ドライヤー", price: 5000, warrantyPeriod: 1 };
 
-// データベースから取得したデータを、検索しやすい辞書（マップ）形式で保持するイメージ
-const employeesCache: EmployeeMap = {
-    "E001": { 
-        id: "E001", 
-        name: "田中 太郎", 
-        age: 30, 
-        department: { id: "D01", name: "総務部" } 
-    },
-    "E002": { 
-        id: "E002", 
-        name: "鈴木 花子", 
-        age: 25, 
-        department: { id: "D02", name: "開発部" } 
-    }
-};
+// ==========================================
+// 割引を実行
+// ==========================================
 
-// IDを指定して従業員データを一瞬で検索する関数
-function findEmployee(id: string) {
-    // 辞書からキー(ID)を使って直接データを取り出す
-    const emp = employeesCache[id];
-    
-    if (emp) {
-        console.log(`✅ 見つかりました: [${emp.id}] ${emp.name} さん（${emp.department.name}）`);
-    } else {
-        console.log(`❌ ${id} の従業員は見つかりませんでした。`);
-    }
-}
+// ✅ 本を 20% オフにする
+// 戻り値は「Book型」のまま返ってくる！
+const discountedBook = applyDiscount(myBook, 0.2);
 
-// 検索の実行
-findEmployee("E001");
-findEmployee("E999"); // 存在しないID
+console.log(`📚 ${discountedBook.title} が ${discountedBook.price}円 になりました。`);
+// 💡 Book型のままなので、本特有の author にもエラーなしでアクセスできる！
+console.log(`（著者: ${discountedBook.author}）`);
+
+// ✅ 家電を 10% オフにする
+const discountedAppliance = applyDiscount(myAppliance, 0.1);
+console.log(`🔌 ${discountedAppliance.name} が ${discountedAppliance.price}円 になりました。`);
